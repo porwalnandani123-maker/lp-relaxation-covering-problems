@@ -58,15 +58,29 @@ against the **LP relaxation value** instead of the true optimum. This bound is v
 
 ## Nemhauser-Trotter preprocessing
 
-Tested on a random graph (20 nodes, 67 edges, p=0.3) and a complete graph (10 nodes,
-45 edges). Both showed **0% size reduction** — every vertex's LP value landed exactly
-at 0.5, so no vertex was "forced" in or out by the LP relaxation. The complete-graph
-result is expected (its LP is symmetric by construction), but the random graph result
-is a useful negative finding too: at this density, the LP relaxation doesn't resolve
-any vertex on its own. Sparser random graphs (lower edge probability) are a natural
-next test, since a sparser graph is more likely to have vertices the LP can already decide.
+Tested at n=30 across a range of edge probabilities to see how graph density affects
+how much the LP relaxation can resolve on its own:
+
+| Edge probability (p) | Nodes | Edges | Size reduction | Forced in / out |
+|---|---|---|---|---|
+| 0.05 | 30 | 23 | 76.7% | 7 / 16 |
+| 0.10 | 30 | 51 | 23.3% | 3 / 4 |
+| 0.15 | 30 | 78 | 6.7% | 1 / 1 |
+| 0.20 | 30 | 102 | 0.0% | 0 / 0 |
+
+**Reduction drops sharply as graphs get denser.** At p=0.05 (sparse), three-quarters of
+vertices are resolved by the LP alone; by p=0.2, none are. This makes sense: in a sparse
+graph, many vertices have few or no edges, so the LP relaxation can push their value to
+exactly 0 or 1 without ambiguity. As density increases, more vertices get pulled into
+genuinely undecided (0.5) territory, since they're now competing over shared edges with
+no clear-cut assignment.
+
+The earlier tests (random graph at p=0.3, and the complete graph) both showed 0%
+reduction, consistent with this trend — both are on the denser end of the spectrum.
+This suggests Nemhauser-Trotter is most useful as a preprocessing step for sparse
+instances, and of little help on dense ones, where the reduction to an approximation
+algorithm still has to handle nearly the full-size problem.
 
 ## Next steps
-- Test Nemhauser-Trotter on sparser random graphs to find where reduction actually helps
 - Implement exact solver, greedy, LP-rounding, and primal-dual for Set Cover
 - Compare Vertex Cover (as a special case) against general Set Cover instances
