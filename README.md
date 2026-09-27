@@ -81,6 +81,28 @@ This suggests Nemhauser-Trotter is most useful as a preprocessing step for spars
 instances, and of little help on dense ones, where the reduction to an approximation
 algorithm still has to handle nearly the full-size problem.
 
+## Set Cover findings
+
+Tested greedy, LP-rounding, and primal-dual against the exact optimum across 5 random
+instances (10-12 elements, 5-8 subsets, max subset size 4-5):
+
+| Instance | Exact | Greedy ratio | LP-rounding ratio | Primal-dual ratio |
+|---|---|---|---|---|
+| 10 elements / 5 subsets | 6 | 1.0 | 1.0 | 1.17 |
+| 10 elements / 6 subsets | 4 | 1.0 | 1.0 | 1.5 |
+| 10 elements / 7 subsets | 7 | 1.0 | 1.0 | 1.14 |
+| 12 elements / 7 subsets | 5 | 1.0 | 1.0 | 1.2 |
+| 12 elements / 8 subsets | 5 | 1.0 | 1.0 | 1.2 |
+
+**Greedy and LP-rounding find the exact optimum on every tested instance**, while
+**primal-dual is consistently worse** (1.14x-1.5x). This differs from the Vertex Cover
+results, where no single method dominated across all graph families — here, two of the
+three methods are uniformly strong on this sample. A larger and more varied sample of
+instances would be needed to confirm this holds generally, since 5 instances is a small
+sample and greedy in particular has no general worst-case guarantee better than the
+proven O(log n) bound.
+
+![Set Cover ratios](set_cover_ratios.png)
+
 ## Next steps
-- Implement exact solver, greedy, LP-rounding, and primal-dual for Set Cover
 - Compare Vertex Cover (as a special case) against general Set Cover instances
