@@ -1,13 +1,13 @@
 # LP Relaxation and Rounding for NP-Hard Covering Problems
 
-Empirical study of approximation algorithms for Vertex Cover (and, in progress, Set Cover):
+Empirical study of approximation algorithms for Vertex Cover and Set Cover:
 greedy, maximal-matching, LP relaxation with rounding, and primal-dual — compared against
 exact solutions across graph families.
 
 ## Status
-- Vertex Cover: all four methods implemented and tested, at both small and large scale.
+- Vertex Cover: all four methods implemented and tested, at both small and large scale,
+  plus Nemhauser-Trotter preprocessing.
 - Set Cover: in progress.
-- Nemhauser-Trotter preprocessing: planned next.
 
 ## Files
 - `graphs.py` — generates random, bipartite, and complete graph instances
@@ -15,8 +15,10 @@ exact solutions across graph families.
 - `heuristics.py` — greedy and maximal-matching algorithms
 - `lp_rounding.py` — LP relaxation, rounding, and half-integrality check
 - `primal_dual.py` — primal-dual 2-approximation algorithm
+- `nemhauser_trotter.py` — LP-based preprocessing to fix vertices before rounding
 - `experiments.py` — small-scale experiments against the true optimum
 - `experiments_large.py` — large-scale experiments against the LP lower bound
+- `set_cover_instances.py` — generates Set Cover instances (in progress)
 
 ## Key findings (small scale, vs. true optimum)
 
@@ -54,6 +56,17 @@ against the **LP relaxation value** instead of the true optimum. This bound is v
 
 ![Large-scale ratios](large_scale_ratios.png)
 
+## Nemhauser-Trotter preprocessing
+
+Tested on a random graph (20 nodes, 67 edges, p=0.3) and a complete graph (10 nodes,
+45 edges). Both showed **0% size reduction** — every vertex's LP value landed exactly
+at 0.5, so no vertex was "forced" in or out by the LP relaxation. The complete-graph
+result is expected (its LP is symmetric by construction), but the random graph result
+is a useful negative finding too: at this density, the LP relaxation doesn't resolve
+any vertex on its own. Sparser random graphs (lower edge probability) are a natural
+next test, since a sparser graph is more likely to have vertices the LP can already decide.
+
 ## Next steps
-- Implement Nemhauser-Trotter preprocessing
-- Repeat this study for Set Cover
+- Test Nemhauser-Trotter on sparser random graphs to find where reduction actually helps
+- Implement exact solver, greedy, LP-rounding, and primal-dual for Set Cover
+- Compare Vertex Cover (as a special case) against general Set Cover instances
