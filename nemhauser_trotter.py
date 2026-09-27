@@ -52,3 +52,11 @@ if __name__ == "__main__":
               f"{reduced.number_of_edges()} edges")
         reduction_pct = 100 * (1 - reduced.number_of_nodes() / g.number_of_nodes())
         print(f"  Size reduction: {reduction_pct:.1f}%")
+
+        print("\n--- Testing sparser random graphs ---")
+    for p in [0.05, 0.1, 0.15, 0.2]:
+        g = random_graph(30, p, seed=7)
+        forced_in, forced_out, reduced = nemhauser_trotter_reduce(g)
+        reduction_pct = 100 * (1 - reduced.number_of_nodes() / g.number_of_nodes())
+        print(f"p={p}: {g.number_of_nodes()} nodes, {g.number_of_edges()} edges -> "
+              f"reduction {reduction_pct:.1f}% ({len(forced_in)} in, {len(forced_out)} out)")
