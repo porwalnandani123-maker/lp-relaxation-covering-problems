@@ -104,5 +104,28 @@ proven O(log n) bound.
 
 ![Set Cover ratios](set_cover_ratios.png)
 
+## Set Cover at scale (vs. LP lower bound)
+
+| n | Subsets | Max subset size | Greedy | LP-rounding | Primal-dual |
+|---|---|---|---|---|---|
+| 20 | 10 | 3 | 1.0 | 1.0 | 1.07 |
+| 50 | 25 | 5 | 1.0 | 1.0 | 1.03 |
+| 100 | 50 | 10 | 1.0 | 1.0 | 1.48 |
+| 150 | 75 | 15 | 1.07 | 1.34 | 1.58 |
+| 200 | 100 | 20 | 1.16 | 1.81 | 1.92 |
+
+**Primal-dual is the weakest method at every tested size**, and the gap between methods
+widens as n grows. Greedy and LP-rounding start at the LP bound exactly (ratio 1.0) for
+small instances, but all three degrade as n increases.
+
+**Caveat:** in this experiment, max subset size grows alongside n (3 at n=20, up to 20
+at n=200), so scale and subset size increase together. Since the LP-rounding bound
+depends on the maximum element frequency f, larger subsets could independently loosen
+the LP bound, confounding the effect of scale alone. Isolating the two — testing fixed
+subset size across growing n — is a natural next step to confirm whether this trend is
+driven by scale, subset size, or both.
+
+![Set Cover large-scale ratios](set_cover_large_ratios.png)
+
 ## Next steps
 - Compare Vertex Cover (as a special case) against general Set Cover instances
