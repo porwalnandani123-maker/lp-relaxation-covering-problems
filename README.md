@@ -2,25 +2,34 @@
 
 Empirical study of approximation algorithms for Vertex Cover and Set Cover:
 greedy, maximal-matching, LP relaxation with rounding, and primal-dual — compared against
-exact solutions across graph families.
+exact solutions across graph families and instance sizes.
 
 ## Status
 - Vertex Cover: all four methods implemented and tested, at both small and large scale,
   plus Nemhauser-Trotter preprocessing.
-- Set Cover: in progress.
+- Set Cover: all three methods (greedy, LP-rounding, primal-dual) implemented and tested,
+  at both small and large scale, including a follow-up experiment isolating scale from
+  subset-size effects.
 
 ## Files
 - `graphs.py` — generates random, bipartite, and complete graph instances
 - `exact.py` — brute-force exact Vertex Cover solver (small instances only)
-- `heuristics.py` — greedy and maximal-matching algorithms
-- `lp_rounding.py` — LP relaxation, rounding, and half-integrality check
-- `primal_dual.py` — primal-dual 2-approximation algorithm
+- `heuristics.py` — greedy and maximal-matching algorithms for Vertex Cover
+- `lp_rounding.py` — LP relaxation, rounding, and half-integrality check for Vertex Cover
+- `primal_dual.py` — primal-dual 2-approximation algorithm for Vertex Cover
 - `nemhauser_trotter.py` — LP-based preprocessing to fix vertices before rounding
-- `experiments.py` — small-scale experiments against the true optimum
-- `experiments_large.py` — large-scale experiments against the LP lower bound
-- `set_cover_instances.py` — generates Set Cover instances (in progress)
+- `experiments.py` — small-scale Vertex Cover experiments against the true optimum
+- `experiments_large.py` — large-scale Vertex Cover experiments against the LP lower bound
+- `set_cover_instances.py` — generates Set Cover instances
+- `set_cover_exact.py` — brute-force exact Set Cover solver
+- `set_cover_heuristics.py` — greedy algorithm for Set Cover
+- `set_cover_lp.py` — LP relaxation and frequency-based rounding for Set Cover
+- `set_cover_primal_dual.py` — primal-dual algorithm for Set Cover
+- `set_cover_experiments.py` — small-scale Set Cover experiments against the true optimum
+- `set_cover_large.py` — large-scale Set Cover experiments against the LP lower bound
+- `set_cover_large_fixed.py` — follow-up experiment isolating scale from subset-size effects
 
-## Key findings (small scale, vs. true optimum)
+## Key findings: Vertex Cover (small scale, vs. true optimum)
 
 1. **Bipartite graphs confirm LP integrality.** Greedy and LP-rounding both achieve
    ratio 1.0 across all tested sizes, matching the theorem that Vertex Cover's LP
@@ -37,7 +46,7 @@ exact solutions across graph families.
 
 ![Approximation ratios](approximation_ratios.png)
 
-## Large-scale findings (vs. LP lower bound)
+## Vertex Cover at scale (vs. LP lower bound)
 
 Exact solving is infeasible beyond ~20 nodes, so at larger sizes we compare methods
 against the **LP relaxation value** instead of the true optimum. This bound is valid
@@ -78,10 +87,9 @@ no clear-cut assignment.
 The earlier tests (random graph at p=0.3, and the complete graph) both showed 0%
 reduction, consistent with this trend — both are on the denser end of the spectrum.
 This suggests Nemhauser-Trotter is most useful as a preprocessing step for sparse
-instances, and of little help on dense ones, where the reduction to an approximation
-algorithm still has to handle nearly the full-size problem.
+instances, and of little help on dense ones.
 
-## Set Cover findings
+## Set Cover findings (small scale, vs. true optimum)
 
 Tested greedy, LP-rounding, and primal-dual against the exact optimum across 5 random
 instances (10-12 elements, 5-8 subsets, max subset size 4-5):
@@ -115,17 +123,20 @@ proven O(log n) bound.
 | 200 | 100 | 20 | 1.16 | 1.81 | 1.92 |
 
 **Primal-dual is the weakest method at every tested size**, and the gap between methods
-widens as n grows. Greedy and LP-rounding start at the LP bound exactly (ratio 1.0) for
-small instances, but all three degrade as n increases.
-
-**Caveat:** in this experiment, max subset size grows alongside n (3 at n=20, up to 20
-at n=200), so scale and subset size increase together. Since the LP-rounding bound
-depends on the maximum element frequency f, larger subsets could independently loosen
-the LP bound, confounding the effect of scale alone. Isolating the two — testing fixed
-subset size across growing n — is a natural next step to confirm whether this trend is
-driven by scale, subset size, or both.
+widens as n grows.
 
 ![Set Cover large-scale ratios](set_cover_large_ratios.png)
 
+**Follow-up (isolating the confound):** re-running the same experiment with max subset
+size held fixed at 5 (rather than growing with n) shows ratios staying close to 1.0
+across all sizes — LP-rounding remains exactly 1.0 at every n, greedy barely moves
+(1.0 to 1.02), and primal-dual grows only modestly (1.03 to 1.18), instead of the sharp
+climb to 1.92 seen before. **This confirms subset size, not universe size, was driving
+the earlier degradation.** Larger subsets increase element frequency, which loosens the
+LP-rounding bound; scale on its own has little effect when subset size stays fixed.
+
+![Set Cover, fixed subset size](set_cover_fixed_size_ratios.png)
+
 ## Next steps
-- Compare Vertex Cover (as a special case) against general Set Cover instances
+- Compare Vertex Cover (as a special case) against general Set Cover instances directly
+- Test Nemhauser-Trotter-style preprocessing ideas for Set Cover
