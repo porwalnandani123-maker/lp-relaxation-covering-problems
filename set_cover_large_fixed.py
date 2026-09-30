@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from set_cover_instances import random_set_cover_instance
 from set_cover_heuristics import greedy_set_cover
 from set_cover_lp import lp_relaxation_set_cover, round_lp_set_cover
-from set_cover_primal_dual import primal_dual_set_cover
+from primal_dual_fixed import primal_dual_set_cover_fixed as primal_dual_set_cover
 
 
 def run_large_methods(universe, subsets):

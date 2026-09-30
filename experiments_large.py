@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from graphs import random_graph, bipartite_graph, complete_graph
 from heuristics import greedy_vertex_cover, matching_vertex_cover
 from lp_rounding import lp_relaxation_vertex_cover, round_lp_solution
-from primal_dual import primal_dual_vertex_cover
+from primal_dual_fixed import primal_dual_vertex_cover_fixed as primal_dual_vertex_cover
 
 
 def run_large_methods(G):
